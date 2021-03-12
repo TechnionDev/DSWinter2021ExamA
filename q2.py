@@ -248,7 +248,7 @@ class Vaccines:
                 curr = curr.left
 
     def find(self, i: int) -> int:
-        pass
+        return num_of_vaccinated(i,i)
 
     def num_of_vaccinated(self, i, j):
         global iterationNum
