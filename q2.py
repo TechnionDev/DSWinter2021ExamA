@@ -331,28 +331,52 @@ class Vaccines:
 
 
 if __name__ == '__main__':
-    lst = list(range(1, 16))
-    n = len(lst)
-    tree = Vaccines(lst)
-    tree.in_order()
-    tree.root.display()
-    tree.add(4, 13, 1)
-    tree.root.display()
-    print(f'Num of vaccinated: {tree.num_of_vaccinated(1,15)}')
+    # lst = list(range(1, 16))
+    # n = len(lst)
+    # tree = Vaccines(lst)
+    # tree.in_order()
+    # tree.root.display()
+    # tree.add(4, 13, 1)
+    # tree.root.display()
+    # print(f'Num of vaccinated: {tree.num_of_vaccinated(1,15)}')
 
-    tree.add(1, 6, 1)
-    tree.root.display()
-    tree.add(6, 10, 1)
-    tree.root.display()
-    tree.add(7, 12, 1)
-    tree.root.display()
-    tree.add(1, 3, 1)
-    tree.root.display()
+    # tree.add(1, 6, 1)
+    # tree.root.display()
+    # tree.add(6, 10, 1)
+    # tree.root.display()
+    # tree.add(7, 12, 1)
+    # tree.root.display()
+    # tree.add(1, 3, 1)
+    # tree.root.display()
 
-    print(f'Num of vaccinated: {tree.num_of_vaccinated(1,15)}')
-    print(f'Num of vaccinated: {tree.num_of_vaccinated(1,7)}')
-    print(f'Num of vaccinated: {tree.num_of_vaccinated(6,11)}')
-    tree.add(6, 11, 1)
-    tree.root.display()
-    print(f'Num of vaccinated: {tree.num_of_vaccinated(6,11)}')
-    tree.root.display()
+    # print(f'Num of vaccinated: {tree.num_of_vaccinated(1,15)}')
+    # print(f'Num of vaccinated: {tree.num_of_vaccinated(1,7)}')
+    # print(f'Num of vaccinated: {tree.num_of_vaccinated(6,11)}')
+    # tree.add(6, 11, 1)
+    # tree.root.display()
+    # print(f'Num of vaccinated: {tree.num_of_vaccinated(6,11)}')
+    # tree.root.display()
+
+    import random as rand
+
+    # Tests count
+    for _ in range(1):
+        size = rand.randint(5, 200)
+        inefficient = [0]*size
+        tree = Vaccines(inefficient)
+        print(inefficient)
+
+        # Ranges count
+        for _ in range(rand.randint(1, 500)):
+            i = rand.randint(1, size)
+            j = rand.randint(i, size)
+            x = rand.randint(1, 11)
+            tree.add(i, j, x)
+            inefficient = (inefficient[:i-1] +
+                           [t + x for t in inefficient[i-1:j]]
+                           + inefficient[j:])
+            print(f'i:{i} ; j:{j} ; x:{x}')
+            print(inefficient)
+            trueSum = sum(inefficient[i-1:j])
+            mySum = tree.num_of_vaccinated(i,j)
+            assert mySum == trueSum, f'My sum is: {mySum} should be {trueSum}'
