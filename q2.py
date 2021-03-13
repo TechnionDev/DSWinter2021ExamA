@@ -200,7 +200,7 @@ class Vaccines:
                 curr.offset += x if isInRange else -x
 
             if curr.index == i:
-                if curr.right:
+                if curr.right and curr.right.max < j:
                     curr.right.subTotal += x * curr.right.subTreeSize
                     curr.right.lazySubTotal += x * curr.right.subTreeSize
                 if curr.left:
@@ -211,7 +211,7 @@ class Vaccines:
                 curr = curr.right
             else:
                 right = curr.right
-                if right and right.max <= j:
+                if right and right.max < j:
                     right.lazy_add(i, j, x)
                 curr = curr.left
 
@@ -229,7 +229,7 @@ class Vaccines:
                 curr.offset += x if isInRange else -x
 
             if curr.index == j:
-                if curr.left:
+                if curr.left and curr.left.min > i:
                     curr.left.subTotal += x * curr.left.subTreeSize
                     curr.left.lazySubTotal += x * curr.left.subTreeSize
                 if curr.right:
@@ -241,14 +241,14 @@ class Vaccines:
 
             if curr.index < j:
                 left = curr.left
-                if left and left.min >= i:
+                if left and left.min > i:
                     left.lazy_add(i, j, x)
                 curr = curr.right
             else:
                 curr = curr.left
 
     def find(self, i: int) -> int:
-        return num_of_vaccinated(i,i)
+        return num_of_vaccinated(i, i)
 
     def num_of_vaccinated(self, i, j):
         global iterationNum
@@ -316,6 +316,7 @@ class Vaccines:
 
     @staticmethod
     def push_sum_down(curr: Node) -> None:
+        global iterationNum
         if curr.lazySubTotal:
             per_node_lazy = int(curr.lazySubTotal / curr.subTreeSize)
             curr._lazySubTotal = 0
@@ -357,26 +358,37 @@ if __name__ == '__main__':
     # print(f'Num of vaccinated: {tree.num_of_vaccinated(6,11)}')
     # tree.root.display()
 
+    # tree = Vaccines([0]*12)
+    # tree.root.display()
+    # tree.add(7, 12, 4)
+    # tree.root.display()
+
     import random as rand
 
     # Tests count
-    for _ in range(1):
-        size = rand.randint(5, 200)
+    for _ in range(10):
+        size = rand.randint(1, 64)
         inefficient = [0]*size
         tree = Vaccines(inefficient)
         print(inefficient)
 
         # Ranges count
-        for _ in range(rand.randint(1, 500)):
+        for _ in range(rand.randint(1, 100)):
             i = rand.randint(1, size)
             j = rand.randint(i, size)
             x = rand.randint(1, 11)
-            tree.add(i, j, x)
             inefficient = (inefficient[:i-1] +
                            [t + x for t in inefficient[i-1:j]]
                            + inefficient[j:])
             print(f'i:{i} ; j:{j} ; x:{x}')
-            print(inefficient)
+            # print(inefficient)
+            tree.add(i, j, x)
+            # tree.root.display()
             trueSum = sum(inefficient[i-1:j])
-            mySum = tree.num_of_vaccinated(i,j)
-            assert mySum == trueSum, f'My sum is: {mySum} should be {trueSum}'
+            mySum = tree.num_of_vaccinated(i, j)
+            mySum = tree.num_of_vaccinated(i, j)
+            if mySum != trueSum:
+                tree.root.display()
+                raise AssertionError(f'My sum is: {mySum} should be {trueSum}')
+
+        tree.root.display()
